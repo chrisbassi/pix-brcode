@@ -1,0 +1,144 @@
+<?php
+if (!is_file(__DIR__ . '/../vendor/autoload.php')) {
+    http_response_code(500);
+    exit('Rode "composer install" na raiz do projeto antes de abrir a demo.');
+}
+?><!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>pix-brcode</title>
+    <meta name="description" content="Gere, valide e leia códigos Pix copia e cola. Demo da lib PHP pix-brcode.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/app.css">
+    <script>
+        try {
+            const saved = localStorage.getItem('theme');
+            if (saved) document.documentElement.dataset.theme = saved;
+        } catch (e) {}
+    </script>
+</head>
+<body>
+<div class="shell">
+    <header class="top">
+        <div class="brand">
+            <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+                <rect x="3" y="3" width="11" height="11" rx="2"/>
+                <rect x="18" y="3" width="11" height="11" rx="2"/>
+                <rect x="3" y="18" width="11" height="11" rx="2"/>
+                <rect x="20" y="20" width="4" height="4"/><rect x="25" y="25" width="4" height="4"/><rect x="25" y="18" width="4" height="2"/>
+            </svg>
+            <div>
+                <h1>pix-brcode</h1>
+                <p>Gere e leia códigos Pix copia e cola. Feito em PHP.</p>
+            </div>
+        </div>
+        <div class="top-actions">
+            <a class="ghost" href="https://github.com/chrisbassi/pix-brcode">GitHub</a>
+            <button class="icon" id="theme" type="button" aria-label="Alternar tema claro e escuro">
+                <svg viewBox="0 0 24 24" class="moon" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg>
+                <svg viewBox="0 0 24 24" class="sun" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            </button>
+        </div>
+    </header>
+
+    <nav class="tabs" role="tablist">
+        <button role="tab" aria-selected="true" aria-controls="panel-generate" id="tab-generate">Gerar código</button>
+        <button role="tab" aria-selected="false" aria-controls="panel-read" id="tab-read">Ler código</button>
+    </nav>
+
+    <section id="panel-generate" role="tabpanel" aria-labelledby="tab-generate" class="panel">
+        <div class="workspace">
+            <form id="form" class="form" autocomplete="off" novalidate>
+                <div class="field">
+                    <div class="label-row">
+                        <label for="key">Chave Pix</label>
+                        <span class="badge" id="key-type" hidden></span>
+                    </div>
+                    <input id="key" name="key" value="chris@email.com" placeholder="CPF, CNPJ, e-mail, +55 telefone ou aleatória" spellcheck="false">
+                    <p class="error" data-for="key"></p>
+                </div>
+
+                <div class="row">
+                    <div class="field grow">
+                        <label for="name">Nome de quem recebe</label>
+                        <input id="name" name="name" value="Chris Bassi" maxlength="40">
+                        <p class="hint"><span data-count="name">0</span> de 25 caracteres</p>
+                    </div>
+                    <div class="field">
+                        <label for="city">Cidade</label>
+                        <input id="city" name="city" value="Goiânia" maxlength="30">
+                        <p class="hint"><span data-count="city">0</span> de 15</p>
+                    </div>
+                </div>
+                <p class="error" data-for="merchant"></p>
+
+                <div class="row">
+                    <div class="field">
+                        <label for="amount">Valor</label>
+                        <div class="affix">
+                            <span>R$</span>
+                            <input id="amount" name="amount" inputmode="decimal" value="25,90" placeholder="em aberto">
+                        </div>
+                        <p class="error" data-for="amount"></p>
+                    </div>
+                    <div class="field grow">
+                        <label for="txid">Identificador (txid)</label>
+                        <input id="txid" name="txid" value="PEDIDO123" placeholder="***" maxlength="25" spellcheck="false">
+                        <p class="error" data-for="txid"></p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="description">Mensagem para quem paga</label>
+                    <input id="description" name="description" placeholder="Opcional" maxlength="72">
+                    <p class="error" data-for="description"></p>
+                </div>
+
+                <label class="switch">
+                    <input type="checkbox" id="singleUse" name="singleUse">
+                    <span class="track"></span>
+                    <span>Código de uso único</span>
+                </label>
+            </form>
+
+            <aside class="result">
+                <div class="qr-card">
+                    <div class="qr" id="qr" aria-live="polite"></div>
+                    <dl class="summary" id="summary"></dl>
+                </div>
+                <div class="actions">
+                    <button type="button" class="primary" id="copy" disabled>Copiar código</button>
+                    <button type="button" class="ghost" id="download-svg" disabled>SVG</button>
+                    <button type="button" class="ghost" id="download-png" disabled>PNG</button>
+                </div>
+                <p class="toast" id="toast" role="status"></p>
+            </aside>
+        </div>
+
+        <div class="anatomy" id="anatomy-generate"></div>
+    </section>
+
+    <section id="panel-read" role="tabpanel" aria-labelledby="tab-read" class="panel" hidden>
+        <div class="reader">
+            <label for="paste">Cole um código Pix copia e cola</label>
+            <textarea id="paste" rows="4" spellcheck="false" placeholder="00020126..."></textarea>
+            <div class="reader-actions">
+                <button type="button" class="primary" id="read">Ler código</button>
+                <button type="button" class="ghost" id="sample">Usar exemplo do Banco Central</button>
+            </div>
+        </div>
+        <div id="read-result"></div>
+        <div class="anatomy" id="anatomy-read"></div>
+    </section>
+
+    <footer class="foot">
+        <p>Só gera Pix estático. A lib confere o formato da chave, mas não consulta se ela existe. Nada do que você digita sai deste servidor.</p>
+    </footer>
+</div>
+<script src="assets/app.js"></script>
+</body>
+</html>

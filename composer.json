@@ -1,0 +1,53 @@
+{
+    "name": "chrisbassi/pix-brcode",
+    "description": "Gere, valide e leia códigos Pix (BR Code / copia e cola) em PHP, com QR Code em SVG ou PNG.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "pix",
+        "brcode",
+        "qrcode",
+        "emv",
+        "bacen",
+        "pagamento",
+        "brasil"
+    ],
+    "authors": [
+        {
+            "name": "Chris Bassi",
+            "homepage": "https://www.behance.net/chrisbassi"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "ext-mbstring": "*",
+        "bacon/bacon-qr-code": "^3.0",
+        "ext-iconv": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5 || ^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ChrisBassi\\PixBrCode\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ChrisBassi\\PixBrCode\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "demo": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -S 127.0.0.1:8000 -t demo"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "suggest": {
+        "ext-gd": "Necessária para gerar o QR Code em PNG."
+    }
+}
