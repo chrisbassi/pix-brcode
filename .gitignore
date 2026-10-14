@@ -4,3 +4,5 @@ composer.lock
 .phpunit.result.cache
 .idea/
 .vscode/
+/pages/node_modules/
+/pages/dist/

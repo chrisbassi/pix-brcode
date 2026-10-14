@@ -23,6 +23,8 @@
     const money = (v) => v == null ? 'Em aberto' : v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
     async function call(action, body) {
+        // No GitHub Pages não há servidor: o PHP roda no navegador (ver pages/runtime.js).
+        if (window.pixApi) return window.pixApi.call(action, body);
         const res = await fetch(`api.php?action=${action}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -149,7 +151,7 @@
         try {
             data = await call('generate', body);
         } catch (e) {
-            setErrors({ key: 'Não consegui falar com o servidor. Confira se o php -S está rodando.' });
+            setErrors({ key: window.pixApi ? 'Não consegui iniciar o PHP no navegador. Recarregue a página.' : 'Não consegui falar com o servidor. Rode composer install e confira se o php -S está rodando.' });
             return;
         }
         if (mine !== seq) return;
@@ -208,6 +210,15 @@
     });
 
     $('#download-png').addEventListener('click', () => {
+        if (window.pixApi) {
+            window.pixApi.png(state.payload).then((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = Object.assign(document.createElement('a'), { href: url, download: 'pix.png' });
+                a.click();
+                URL.revokeObjectURL(url);
+            }).catch(() => toast('Não consegui gerar o PNG aqui. Baixe o SVG.'));
+            return;
+        }
         window.location.href = `api.php?action=png&payload=${encodeURIComponent(state.payload)}`;
     });
 

@@ -1,9 +1,4 @@
-<?php
-if (!is_file(__DIR__ . '/../vendor/autoload.php')) {
-    http_response_code(500);
-    exit('Rode "composer install" na raiz do projeto antes de abrir a demo.');
-}
-?><!doctype html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
     <meta charset="utf-8">
@@ -107,7 +102,7 @@ if (!is_file(__DIR__ . '/../vendor/autoload.php')) {
 
             <aside class="result">
                 <div class="qr-card">
-                    <div class="qr" id="qr" aria-live="polite"></div>
+                    <div class="qr" id="qr" aria-live="polite"><p class="qr-empty" id="qr-loading">Carregando…</p></div>
                     <dl class="summary" id="summary"></dl>
                 </div>
                 <div class="actions">
@@ -139,6 +134,6 @@ if (!is_file(__DIR__ . '/../vendor/autoload.php')) {
         <p>Só gera Pix estático. A lib confere o formato da chave, mas não consulta se ela existe. Nada do que você digita sai deste servidor.</p>
     </footer>
 </div>
-<script src="assets/app.js"></script>
+<script type="module" src="assets/app.js"></script>
 </body>
 </html>

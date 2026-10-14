@@ -2,6 +2,8 @@
 
 Gere, valide e leia códigos Pix (o "copia e cola" e o QR Code) em PHP, sem depender de banco nem de API.
 
+**[Abrir a demo](https://chrisbassi.github.io/pix-brcode/)**
+
 ![Gerador da demo](docs/gerador.png)
 
 - Gera o **BR Code** do Pix estático seguindo o padrão do Banco Central, byte a byte igual ao exemplo do manual.
@@ -108,10 +110,24 @@ A pasta `demo/` tem uma interface com tema escuro e claro para gerar códigos em
 
 ![Leitor apontando CRC inválido](docs/leitor.png)
 
+Rodando local, com o PHP do seu computador:
+
 ```bash
 composer install
 composer demo   # abre em http://127.0.0.1:8000 (deixe o terminal aberto)
 ```
+
+### Como a demo roda no GitHub Pages
+
+O Pages só serve arquivos estáticos e não executa PHP. Em vez de reescrever a lib em JavaScript, a versão publicada carrega o **PHP 8.3 compilado para WebAssembly** ([php-wasm](https://www.npmjs.com/package/@php-wasm/web)) e roda esta mesma lib dentro do navegador. A pasta `pages/` monta esse build com Vite, e o workflow `.github/workflows/pages.yml` publica a cada push na `main`.
+
+```bash
+cd pages
+npm install
+npm run dev     # mesma demo, com o PHP rodando no navegador
+```
+
+Na primeira visita o navegador baixa o runtime do PHP, então a página demora alguns segundos para gerar o primeiro código.
 
 ## Testes
 
